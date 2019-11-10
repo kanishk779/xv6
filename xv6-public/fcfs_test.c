@@ -2,8 +2,8 @@
 #include "stat.h"
 #include "user.h"
 
-#define FORKS 2
-#define TIMES 10000
+#define FORKS 10
+#define TIMES 150000
 
 int main(void)
 {
@@ -16,6 +16,7 @@ int main(void)
 			for(j = 0; j < TIMES; j++)
 			{
 				printf(10, "%d", j);
+				j++;j--;
 			}
 			exit();
 		}

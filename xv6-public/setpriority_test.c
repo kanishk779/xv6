@@ -2,13 +2,13 @@
 #include "stat.h"
 #include "user.h"
 
-#define FORKS 2
-#define TIMES 10000
+#define FORKS 10
+#define TIMES 150000
 // Parent forks two children, waits for them to exit and then finally exits
 
 static unsigned long X = 1;
 
-int rand_generator(int seed) {
+int my_rand(int seed) {
 	unsigned long a = 110351245, c = 12345;
 	X = a * X + c;
 	return ((unsigned int)(X / 65536) % 32768) % seed + 1;
@@ -21,10 +21,11 @@ int main(void)
 	{
 		if(fork() == 0)
 		{
-			set_priority(rand_generator(uptime()) % 101);
+			set_priority(my_rand(uptime()) % 101);
 			for(j = 0; j < TIMES; j++)
 			{
 				j++; j--;
+				printf(1,"children\n");
 			}
 			exit();
 		}

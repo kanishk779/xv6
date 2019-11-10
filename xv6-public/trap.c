@@ -8,7 +8,7 @@
 #include "traps.h"
 #include "spinlock.h"
 
-#define MLQ
+#define MLFQ
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
@@ -104,13 +104,13 @@ trap(struct trapframe *tf)
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   // TODO: comment this out
-#ifdef PS
+#ifdef PBS
   if(myproc() && myproc()->state == RUNNING &&
-		  tf->trapno == T_IRQ0+IRQ_TIMER)
+      tf->trapno == T_IRQ0+IRQ_TIMER)
   {
-	  if(shouldIgiveUp(myproc()->priority)) {
-		  yield();
-	  }
+    if(processYield(myproc()->priority)) {
+      yield();
+    }
   }
 #endif
 
@@ -122,25 +122,20 @@ trap(struct trapframe *tf)
   }
 #endif
 
-#ifdef MLQ
+#ifdef MLFQ
   if(myproc() && myproc()->state == RUNNING &&
      tf->trapno == T_IRQ0+IRQ_TIMER)
   {
-	  myproc()->rtime++;
-	  myproc()->localrtime++;
+    myproc()->rtime++;
+    myproc()->localrtime++;
   }
   if(myproc() && myproc()->state == RUNNING &&
-		  tf->trapno == T_IRQ0 + IRQ_TIMER && myproc()->pid > 2)
+      tf->trapno == T_IRQ0 + IRQ_TIMER && myproc()->pid > 2)
   {
-	  if(myproc()->localrtime >= time_slice[myproc()->qno])
-	  {
-		  yield();
-	  }
-	  else
-	  {
-		  // update qpos of all processes and push to head without yield
-		  updateQpos();
-	  }
+    if(myproc()->localrtime >= time_quantum[myproc()->q_number])
+      yield();
+    else
+      updateq_position();
   }
 #endif
 

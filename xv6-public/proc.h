@@ -1,18 +1,18 @@
 #define QUEUE_COUNT 5
-#define MLQ
+#define MLFQ
 // Per-CPU state
 struct proc_stat { 
-	int pid;   // PID of each process  
-	float runtime;  // Use suitable unit of time 
-	int num_run; // number of time the process is executed 
-	int current_queue; // current assigned queue 
-	int ticks[5]; // number of ticks each process has received at each of the 5  priority 
+  int pid;   // PID of each process  
+  float runtime;  // Use suitable unit of time 
+  int num_run; // number of time the process is executed 
+  int current_queue; // current assigned queue 
+  int ticks[5]; // number of ticks each process has received at each of the 5  priority 
 };
 
 
-int proc_count[QUEUE_COUNT], time_slice[QUEUE_COUNT], queue_limit[QUEUE_COUNT];
+int process_count[QUEUE_COUNT], time_quantum[QUEUE_COUNT], queue_aging_limit[QUEUE_COUNT];
 
-int updateQpos();
+int updateq_position();
 
 struct cpu {
   uchar apicid;                // Local APIC ID
@@ -68,9 +68,9 @@ struct proc {
   int etime;                   // End time
   int rtime;                   // Runtime
   int enteredtime, exit_time;  // When did it last start running?
-  int ran;
+  int did_it_run;
   int priority;
-  int qno, qpos;
+  int q_position,q_number;
   int localrtime;
   int ticks[5];
   int num_run;
@@ -82,4 +82,4 @@ struct proc {
 //   fixed-size stack
 //   expandable heap
 
-int shouldIgiveUp(int priority);
+int processYield(int priority);

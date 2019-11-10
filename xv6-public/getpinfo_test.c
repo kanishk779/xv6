@@ -36,9 +36,10 @@ int main(void)
 			printf(1, "pid[%d] ", p.pid);
 			printf(1, "num_run[%d] ", p.num_run);
 			printf(1, "current_queue[%d] ", p.current_queue);
-			for(int i = 0; i < 5; i++)
+			int k;
+			for(k= 0; k < 5; k++)
 			{
-				printf(1, "ticks[%d] = (%d) ", i, p.ticks[i]);
+				printf(1, "ticks[%d] = (%d) ", k, p.ticks[k]);
 			}
 			exit();
 		}
